@@ -7,7 +7,7 @@ def scan(text):
 
     for func in functions_list:
         result = func(text)
-        if not result is None:
+        if result is not None:
             findings.append(result)
 
     return findings
