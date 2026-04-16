@@ -1,47 +1,21 @@
 import re
+from scanner.rules import RULES
 
-LIST_REGEX_OVERRIDE = [r"you\s+are\s+now\s+a", r"forget\s+(everything|all)", r"act\s+as\s+(if\s+you\s+(were|are)|a|an)\s"]
-
-LIST_SYSTEM_IMPERSONATION_REGEX = [r"\[\s*(system|admin|root)\s*\]", r"<<\s*(admin|system|root|override)\s*>>", r"developer\s+mode|admin\s+override|emergency\s+protocol"]
 
 def scan(text):
     findings = []
+    lines = text.split("\n")
 
-    functions_list = [override_attempt, system_impersonation]
-
-    for func in functions_list:
-        result = func(text)
-        if result:
-            findings.extend(result)
-
+    for rule in RULES:
+        for i, line in enumerate(lines):
+            for pattern in rule["patterns"]:
+                match = re.search(pattern, line, re.IGNORECASE)
+                if match:
+                    findings.append({
+                        "rule": rule["id"],
+                        "severity": rule["severity"],
+                        "line": i + 1,
+                        "matched_text": match.group()
+                    })
     return findings
 
-def override_attempt(text):
-    override_attempt_list = []
-    list_lines = text.split("\n")
-    for i, line in enumerate(list_lines):
-        for reg in LIST_REGEX_OVERRIDE:
-            matched = re.search(reg, line, re.IGNORECASE)
-            if matched:
-                matched_text = matched.group()
-                override_attempt_list.append({
-                "rule": "role-override",
-                "severity": "critical",
-                "line": i + 1,
-                "matched_text": matched_text
-                })
-    return override_attempt_list
-
-def system_impersonation(text):
-    list_lines = text.split("\n")
-    system_impersonation_list = []
-
-    for i, line in enumerate(list_lines):
-        for reg in LIST_SYSTEM_IMPERSONATION_REGEX:
-            matched = re.search(reg, line, re.IGNORECASE)
-            if matched:
-                matched_text = matched.group()
-                system_impersonation_list.append({
-                   "rule": "system-impersonation", "severity": "critical", "line": i + 1, "matched_text": matched_text
-                 })
-    return system_impersonation_list
