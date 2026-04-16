@@ -1,4 +1,4 @@
-# SkillGuard
+# SkillsSecurity
 
 Um scanner que analisa ficheiros `.md` de skills e deteta tentativas de prompt injection antes que cheguem a um LLM.
 
