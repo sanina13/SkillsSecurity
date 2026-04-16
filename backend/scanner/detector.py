@@ -1,5 +1,7 @@
 import re
 
+list_regex = [r"you\s+are\s+now\s+a", r"forget\s+(everything|all)", r"act\s+as\s+(if\s+you\s+(were|are)|a|an)\s"]
+
 def scan(text):
     findings = []
 
@@ -13,10 +15,13 @@ def scan(text):
     return findings
 
 def override_attempt(text):
-    list_regex = [r"you\s+are\s+now\s+a", r"forget\s+(everything|all)", r"act\s+as\s+(if\s+you\s+(were|are)|a|an)\s"]
-    for reg in list_regex:
-        if re.search(reg, text, re.IGNORECASE):
-            return{
-                "rule": "role-override", "severity": "critical"
-            }
+    list_lines = text.split("\n")
+    for i, line in enumerate(list_lines):
+        for reg in list_regex:
+            matched = re.search(reg, line, re.IGNORECASE)
+            if matched:
+                matched_text = matched.group()
+                return{
+                    "rule": "role-override", "severity": "critical", "line": i + 1, "matched_text": matched_text
+                }
     return None
