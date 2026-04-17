@@ -10,11 +10,29 @@ def root():
 
 @app.post("/scan")
 async def scan_file(file: UploadFile):
+    if not file.filename.endswith(".md"):
+        raise HTTPException(status_code=400, detail="Only .md files are accepted")
 
-    if file.filename.endswith(".md"):
-        content = await file.read()
-        text = content.decode("utf-8")
-        return scan(text)
+    content = await file.read()
 
-    raise HTTPException(status_code=400, detail="Only .md files are accepted")
+    if len(content) > 1_000_000:
+            raise HTTPException(status_code=400, detail="File too large. Maximum size is 1MB")
+
+    text = content.decode("utf-8")
+    findings = scan(text)
+    return {"filename": file.filename, "total_findings": len(findings), "summary": {
+         "critical": sum(1 for find in findings if find.get("severity") == "critical"),
+         "high": sum(1 for find in findings if find.get("severity") == "high"),
+         "medium": sum(1 for find in findings if find.get("severity") == "medium")
+    }, "findings": findings}
+
+
+
+
+
+
+
+
+
+
 
