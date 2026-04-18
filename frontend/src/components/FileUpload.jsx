@@ -1,8 +1,7 @@
 import { useState } from 'react';
 
-function FileUpload() {
+function FileUpload({ onResults }) {
   const [file, setFile] = useState(null);
-  const [results, setResults] = useState(null);
 
   async function handleScan() {
     const formData = new FormData();
@@ -16,7 +15,7 @@ function FileUpload() {
 
       const data = await response.json();
 
-      setResults(data);
+      onResults(data);
 
       console.log(data);
     } catch (error) {
