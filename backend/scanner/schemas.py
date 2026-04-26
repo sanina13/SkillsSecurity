@@ -6,6 +6,7 @@ class Finding(BaseModel):
     severity: str
     line: int
     matched_text: str
+    line_content: str
 
 class ScanSummary(BaseModel):
     critical: int
