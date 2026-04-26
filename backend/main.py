@@ -1,7 +1,7 @@
 from fastapi import FastAPI, UploadFile, HTTPException
 from scanner.detector import scan
 from fastapi.middleware.cors import CORSMiddleware
-
+from scanner.schemas import ScanResponse
 app = FastAPI()
 
 #Tells to FastApi to accept requests from localhost:5173
@@ -17,7 +17,7 @@ app.add_middleware(
 def root():
     return {"message": "SkillSecurity API"}
 
-@app.post("/scan")
+@app.post("/scan", response_model=ScanResponse)
 async def scan_file(file: UploadFile):
     if not file.filename.endswith(".md"):
         raise HTTPException(status_code=400, detail="Only .md files are accepted")
