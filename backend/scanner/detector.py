@@ -16,7 +16,8 @@ def scan(text):
                         "severity": rule["severity"],
                         "line": i + 1,
                         "matched_text": match.group(),
-                        "line_content": line
+                        "line_content": line,
+                        "description": rule["description"]
                     })
     return findings
 

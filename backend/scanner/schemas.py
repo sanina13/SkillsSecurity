@@ -7,6 +7,7 @@ class Finding(BaseModel):
     line: int
     matched_text: str
     line_content: str
+    description: str
 
 class ScanSummary(BaseModel):
     critical: int
